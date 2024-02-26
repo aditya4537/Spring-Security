@@ -1,11 +1,11 @@
 package com.example.secureApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer.UserInfoEndpointConfig;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.secureApp.entity.User;
@@ -17,29 +17,38 @@ public class UserController {
 	@Autowired
 	private UserInterface userInterface;
 	
-	@RequestMapping("/")
-	public String indexPage(){
-		return "index.jsp";
+	@GetMapping("/")
+	public ModelAndView indexPage(){
+		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // Get the username of the currently logged-in user
+        String currentUserName = authentication.getName();
+        
+        ModelAndView mv = new ModelAndView("index");
+        mv.addObject("username", currentUserName);
+        
+		return mv;
 	}
 
-	@RequestMapping("/home")
-	public String home(){
-		return "home.jsp";
+	@GetMapping("/home")
+	public ModelAndView home(){
+		ModelAndView mv = new ModelAndView("home");
+		return mv;
 	}
 	
-	@RequestMapping("/login")
-	public String loginPage(){
-		return "login.jsp";
+	@GetMapping("/login")
+	public ModelAndView loginPage(){
+		return new ModelAndView("login");
 	}
 	
-	@RequestMapping("/logout-success")
-	public String logoutPage(){
-		return "logout.jsp";
+	@GetMapping("/logout-success")
+	public ModelAndView logoutPage(){
+		return new ModelAndView("index");
 	}
 	
-	@RequestMapping("/register")
-	public String registerPage(){
-		return "register.jsp";
+	@GetMapping("/register")
+	public ModelAndView registerPage(){
+		return new ModelAndView("register");
 	}
 	
 	@PostMapping("/addUser")
